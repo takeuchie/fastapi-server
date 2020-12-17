@@ -20,7 +20,7 @@ $ env\Scripts\activate
 # install dependencies
 $ pip3 install -r requirements.txt
 
-# serve with hot reload at localhost:8000
-$ uvicorn main:app --reload
+# serve with hot reload at localhost:8002
+$ uvicorn main:app --reload --port 8002
 
 ```

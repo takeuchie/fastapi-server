@@ -1,9 +1,7 @@
-from typing import Optional
-
-from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 # Instantiate app object
 app = FastAPI()
@@ -17,28 +15,21 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# In memory database 
-db = [{
-    'username': 'admin@test.com',
-    'email': 'admin@test.com',
-    'hashed_password': 'hashedPassw0rd!',
-}] 
-
-# Sample model
-class User(BaseModel):
-    username: str
-    email: Optional[str] = None
-    state: Optional[str] = None
-    file_status: Optional[str] = None
-
-class UserInDB(User):
-    hashed_password: str
+class Security(BaseModel):
+    fair_market_value: float
+    quantity: int
 
 # Endpoints / Routes
 @app.get('/')
 def index():
     return 'Backend API Works'
 
-@app.get('/users')
-def get_users():
-    return db
+@app.post('/securities')
+def estimate(security: Security):
+    if not security.fair_market_value > 0:
+        raise HTTPException(status_code=400, detail="Invalid value given")
+
+    if not security.quantity > 0:
+        raise HTTPException(status_code=400, detail="Invalid value given")
+
+    return security.fair_market_value * security.quantity
